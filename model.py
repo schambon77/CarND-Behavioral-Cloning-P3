@@ -11,6 +11,10 @@ import os
 import cv2
 import numpy as np
 
+#Data loading
+#============
+
+#Helper function that recursively scans all folders from a root directory
 def load_from_dir(dir):
     print('Processing directory: {}'.format(dir))
     dir_contents = os.listdir(dir)
@@ -26,8 +30,8 @@ def load_from_dir(dir):
                     lines.append(line)
             for line in lines:
                 source_path = line[0]
-                filename = source_path.split('/')[-1]
-                current_path = dir + '//IMG' + filename
+                filename = source_path.split('\\')[-1]
+                current_path = dir + '//IMG//' + filename
                 image = cv2.imread(current_path)
                 images.append(image)
                 measurement = float(line[3])
@@ -39,7 +43,29 @@ def load_from_dir(dir):
             measurements += sub_dir_measurements
     return images, measurements
     
+#Load data; assumes data are contained in 1 or several folders called Trainingxxx
+#found from the folder one level up
 images, measurements = load_from_dir('..')
 
-X_train = np.array(images)
-y_train =np.array(measurements)
+image_shape = images[0].shape
+
+X_train = np.array(images).reshape((-1,)+image_shape)
+y_train = np.array(measurements)
+
+print('X_train shape: {}'.format(X_train.shape))
+print('y_train shape: {}'.format(y_train.shape))
+
+from keras.models import Sequential
+from keras.layers import Flatten, Dense
+
+#Build model
+model = Sequential()
+model.add(Flatten(input_shape=(160, 320, 3)))
+model.add(Dense(1))
+
+#Train model
+model.compile(loss='mse', optimizer='adam')
+model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=7)
+
+#Save model
+model.save('model.h5')
