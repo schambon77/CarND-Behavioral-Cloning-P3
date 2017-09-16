@@ -47,9 +47,7 @@ def load_from_dir(dir):
 #found from the folder one level up
 images, measurements = load_from_dir('..')
 
-image_shape = images[0].shape
-
-X_train = np.array(images).reshape((-1,)+image_shape)
+X_train = np.array(images)
 y_train = np.array(measurements)
 
 print('X_train shape: {}'.format(X_train.shape))
