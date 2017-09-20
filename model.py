@@ -10,7 +10,6 @@ import csv
 import os
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
@@ -20,6 +19,8 @@ import pickle
 
 #Constants
 correction_cameras = 0.2
+correction_custom_left_camera = 0.2
+correction_custom_right_camera = -0.2
 
 #Helper function that recursively scans all folders from a root directory
 def load_from_dir(directory):
@@ -61,17 +62,18 @@ def generator(samples, batch_size=32):
             for batch_sample in batch_samples:
                 directory = batch_sample[0]
                 line = batch_sample[1]
-                for i in range(3):
+                for i in range(3):    #use of left and right images: 1: OFF, 3: ON
                     source_path = line[i]
                     filename = source_path.split('\\')[-1]
                     current_path = directory + '//IMG//' + filename
                     image = cv2.imread(current_path)
+                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     images.append(image)
                     correction = 0
                     if i == 1:     #left image
-                        correction = correction_cameras
+                        correction = correction_custom_left_camera
                     elif i == 2:   #right image
-                        correction = -1.0 * correction_cameras
+                        correction = correction_custom_right_camera
                     measurement = float(line[3]) + correction
                     measurements.append(measurement)
                     #add augmented data through flipping
@@ -88,7 +90,7 @@ validation_generator = generator(validation_samples, batch_size=32)
 #Build model
 model = Sequential()
 model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160, 320, 3)))
-model.add(Cropping2D(cropping=((50, 20), (0, 0))))
+model.add(Cropping2D(cropping=((70, 25), (0, 0))))
 model.add(Convolution2D(24, 5, 5,subsample=(2,2), activation='relu'))
 model.add(Convolution2D(36, 5, 5,subsample=(2,2), activation='relu'))
 model.add(Convolution2D(48, 5, 5,subsample=(2,2), activation='relu'))
@@ -103,19 +105,8 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*6, 
                                      validation_data=validation_generator, nb_val_samples=len(validation_samples)*6, 
-                                     nb_epoch=5)
+                                     nb_epoch=10)
 
-#Save model
+#Save model and training history
 model.save('model.h5')
-pickle.dump(history_object, 'training_history.p')
-
-"""
-#plot the training and validation loss for each epoch
-plt.plot(history_object.history['loss'])
-plt.plot(history_object.history['val_loss'])
-plt.title('model mean squared error loss')
-plt.ylabel('mean squared error loss')
-plt.xlabel('epoch')
-plt.legend(['training set', 'validation set'], loc='upper right')
-plt.savefig('history_training.png')
-"""
+pickle.dump(history_object.history, open('training_history.p', 'wb'))
