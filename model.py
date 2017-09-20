@@ -18,11 +18,11 @@ from keras.layers.convolutional import Convolution2D, Cropping2D
 import pickle
 
 #Constants
-correction_cameras = 0.2
 correction_custom_left_camera = 0.2
 correction_custom_right_camera = -0.2
 
 #Helper function that recursively scans all folders from a root directory
+#Parses driving_log.csv files to store training images location and labels in memory
 def load_from_dir(directory):
     print('Processing directory: {}'.format(directory))
     dir_contents = os.listdir(directory)
@@ -50,7 +50,7 @@ train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 print('{} training samples'.format(len(train_samples)))
 print('{} validation samples'.format(len(validation_samples)))
 
-#Generator to load images in manageable batches
+#Generator to load images in memory in manageable batches
 def generator(samples, batch_size=32):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
@@ -62,11 +62,13 @@ def generator(samples, batch_size=32):
             for batch_sample in batch_samples:
                 directory = batch_sample[0]
                 line = batch_sample[1]
-                for i in range(3):    #use of left and right images: 1: OFF, 3: ON
+                for i in range(3):    #use of left and right images
                     source_path = line[i]
                     filename = source_path.split('\\')[-1]
                     current_path = directory + '//IMG//' + filename
                     image = cv2.imread(current_path)
+                    #following line needed as cv2.imread() reads in BGR mode,
+                    #whereas drive.py file excepts RGB images - tip found in project resources!
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     images.append(image)
                     correction = 0
@@ -87,7 +89,7 @@ def generator(samples, batch_size=32):
 train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
     
-#Build model
+#Build model based on NVIDIA architecture explained in project guidelines
 model = Sequential()
 model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160, 320, 3)))
 model.add(Cropping2D(cropping=((70, 25), (0, 0))))
