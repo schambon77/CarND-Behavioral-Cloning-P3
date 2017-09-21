@@ -141,3 +141,7 @@ I used this training data for training the model. The validation set helped dete
 ![Training History][image11]
 
 I used an adam optimizer so that manually training the learning rate wasn't necessary.
+
+### Simulation
+
+As shown in the [recorded video](https://github.com/schambon77/CarND-Behavioral-Cloning-P3/blob/master/run1.mp4), the car was able to navigate correctly in autonomous mode. In particular, it respected the constraints: no tyre leaving the drivable portion of the track surface, car didn't pop up onto ledges or roll over any surfaces considered unsafe.
