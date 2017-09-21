@@ -15,8 +15,12 @@ The goals / steps of this project are the following:
 [image3]: ./center_2017_09_18_20_26_17_648.jpg "Recovery From Left Side"
 [image4]: ./center_2017_09_18_22_03_17_398.jpg "Curve Driving"
 [image5]: ./center_2017_09_18_21_41_17_958.jpg "Opposite Direction Driving"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image6]: ./left_2017_09_18_20_01_43_969.jpg "Left Image"
+[image7]: ./center_2017_09_18_20_01_43_969.jpg "Center Image"
+[image8]: ./right_2017_09_18_20_01_43_969.jpg "Right Image"
+[image9]: ./right_2017_09_18_20_01_43_969.jpg "Original Image"
+[image10]: ./right_2017_09_18_20_01_43_969_flipped.jpg "Flipped Image"
+[image11]: ./history_training.png "Training History"
 
 
 ## Rubric Points
@@ -51,7 +55,7 @@ For this project, I used the same architecture as the NVIDIA model discussed in 
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on different data sets to ensure that the model was not overfitting. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. The training data included recordings of driving in both directions on the track. 
 
 #### 3. Model parameter tuning
 
@@ -107,8 +111,10 @@ To capture good driving behavior, I first recorded two laps on track one using c
 
 I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to recover from a situation where it is too close to the side of the track. These images show what a recovery looks like starting from:
 * the right side of the track:
+
 ![Recovery From Right Side][image2]
 * the left side of the track:
+
 ![Recovery From Left Side][image3]
 
 I captured more training data along curves while driving smoothly in the center of the road:
@@ -117,15 +123,21 @@ I captured more training data along curves while driving smoothly in the center 
 I also recorded data while driving opposite direction in order to help the model generalize and counter the left turn bias:
 ![Opposite Direction Driving][image5]
 
-To augment the data sat, I also flipped images and angles. For example, here is an image that has then been flipped:
-![alt text][image6]
-![alt text][image7]
+I have used all 3 images recorded at each timestamp as shown below (left, center, right):
+![Left Image][image6]
+![Center Image][image7]
+![Right Image][image8]
 
-Etc ....
+To augment the data set, I have also flipped images and angles. For example, here is an image that has then been flipped:
+![Original Image][image9]
+![Flipped Image][image10]
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+I ended up with a set of 121224 data points which randomly shuffled, and split into training (80% - 96978 points) and validation (20% - 24246 points).
 
+Given the size of the data set, a generator was used in order to load the data into memory in manageable batches.
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The number of epochs was increased from 5 to 10 in order to lower the training and validation loss, although the history loss shown below indicates that 7 epochs would have been good enough. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+![Training History][image11]
+
+I used an adam optimizer so that manually training the learning rate wasn't necessary.
