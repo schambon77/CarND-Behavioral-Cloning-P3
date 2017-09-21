@@ -15,9 +15,9 @@ The goals / steps of this project are the following:
 [image3]: ./center_2017_09_18_20_26_17_648.jpg "Recovery From Left Side"
 [image4]: ./center_2017_09_18_22_03_17_398.jpg "Curve Driving"
 [image5]: ./center_2017_09_18_21_41_17_958.jpg "Opposite Direction Driving"
-[image6]: ./left_2017_09_18_20_01_43_969.jpg "Left Image"
-[image7]: ./center_2017_09_18_20_01_43_969.jpg "Center Image"
-[image8]: ./right_2017_09_18_20_01_43_969.jpg "Right Image"
+[image6]: ./left_2017_09_18_20_01_43_969_small.jpg "Left Image"
+[image7]: ./center_2017_09_18_20_01_43_969_small.jpg "Center Image"
+[image8]: ./right_2017_09_18_20_01_43_969_small.jpg "Right Image"
 [image9]: ./right_2017_09_18_20_01_43_969.jpg "Original Image"
 [image10]: ./right_2017_09_18_20_01_43_969_flipped.jpg "Flipped Image"
 [image11]: ./history_training.png "Training History"
@@ -123,7 +123,7 @@ I captured more training data along curves while driving smoothly in the center 
 I also recorded data while driving opposite direction in order to help the model generalize and counter the left turn bias:
 ![Opposite Direction Driving][image5]
 
-I have used all 3 images recorded at each timestamp as shown below (left, center, right):
+I have used all 3 images recorded at each timestamp as shown below (left, center, right, resized to be displayed side by side):
 ![Left Image][image6]
 ![Center Image][image7]
 ![Right Image][image8]
